@@ -1,0 +1,7 @@
+.clicavel{
+    cursor: pointer;
+}
+
+.tachado{
+    text-decoration: line-through !important;
+}

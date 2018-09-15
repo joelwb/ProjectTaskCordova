@@ -1,9 +1,6 @@
-function Lista(id, nome){
-    this.id = id;
+function Lista(id, nome) {
+    if (id) {
+        this.id = id;
+    }
     this.nome = nome;
 }
-
-function Lista(nome){
-    this.nome = nome;
-}
-

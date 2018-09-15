@@ -16,9 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 var app = {
     // Application Constructor
     initialize: function () {
+        //Adicona o evento que será acionado quando o cordova for carregado
         document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
     },
 
@@ -27,7 +29,7 @@ var app = {
     // Bind any cordova events here. Common events are:
     // 'pause', 'resume', etc.
     onDeviceReady: function () {
-        new ViewLista();
+        new ViewLista(); //Inicia a primeira View
     },
 };
 

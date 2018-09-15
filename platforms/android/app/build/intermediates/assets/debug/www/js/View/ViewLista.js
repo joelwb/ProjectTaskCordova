@@ -1,12 +1,15 @@
 function ViewLista() {
     layout = 
-    '<nav class="navbar navbar-dark bg-dark">' +
+    '<nav class="navbar sticky-top navbar-dark bg-dark">' +
         '<a class="navbar-brand mr-auto" href="#">ProjectTask</a>' +
         '<button type="button" id="buttonAdd" class="btn btn-outline-light">Add</button>' +
     '</nav>' +
-    '<div data-type="lista" class="container">' +
-    '<ul id="listaItem" class="list-group my-3"></ul>' +
-    '<input type="text" class="form-control d-none" id="inputNovaLista" aria-describedby="inputNovaListaHelp" placeholder="Informe o nome da Lista">' +
+    '<div data-type="lista" class="container my-3">' +
+    '<p class="lead text-center mb-3">Listas de Tarefas</p>'+
+    '<ul id="listaItem" class="list-group mb-3"></ul>' +
+    '<div class="row" style="padding-bottom:50px;">'+
+        '<input type="text" class="form-control d-none" id="inputNovaLista" aria-describedby="inputNovaListaHelp" placeholder="Informe o nome da Lista">' +
+    '</div>'+    
     '<div class="m-3 row fixed-bottom">' +
         '<div id="optNovoItem" class="d-none ml-auto">' +
             '<button id="btnCancelar" type="button" class="btn btn-danger">Cancelar</button>' +
@@ -26,50 +29,62 @@ function ViewLista() {
     buttonAdd.click(this.onAddButtonClick);
     btnCancelar.click(this.closeInput);
     btnSalvar.click(this.salvarItem);
+
+    new ListaDAO().loadAll(ViewLista.prototype.addOnScreen);
 }
 
 ViewLista.prototype.onAddButtonClick = function() {
     if (optNovoItem.hasClass("d-none")) {
         optNovoItem.toggleClass("d-none");
         inputNovoItem.toggleClass("d-none");
+        inputNovoItem.focus();
+        window.scrollTo(0,document.body.scrollHeight);
     }
 }
 
 ViewLista.prototype.closeInput = function() {
     inputNovoItem.val("");
-    inputNovoItem.toggleClass("d-none");
-    optNovoItem.toggleClass("d-none");
+    inputNovoItem.addClass("d-none");
+    optNovoItem.addClass("d-none");
 }
 
 
 ViewLista.prototype.salvarItem = function() {
-    var valor = inputNovoItem.val();
-    if (valor === "") return;
+    var nome = inputNovoItem.val();
+    if (nome === "") return;
 
-    var listaModel = new Lista(valor);
-    var novoItem = ViewLista.prototype.addItem(listaModel); 
-
-    ViewLista.prototype.addItemClick(novoItem);
-    ViewLista.prototype.closeInput();
+    var listaModel = new Lista(null,nome);
+    new ListaDAO().add(listaModel,ViewLista.prototype.addOnScreen);
 }
 
-ViewLista.prototype.addItem = function (ListaModel) {
+ViewLista.prototype.renderItem = function (ListaModel) {
     novoItem = Mustache.render(
         '<li name="lista" data-id="{{id}}" class="list-group-item">' +
-            '{{nome}}' +
+            '<p class="d-inline">{{nome}}</p>' +
+            '<button type="button" class="close" aria-label="Close">'+
+                '<span aria-hidden="true">&times;</span>'+
+            '</button>'+
         '</li>',
         ListaModel);
 
     listaItem.append(novoItem);
     
-    return listaItem.last();
+    return listaItem.children().last()
 }
 
 ViewLista.prototype.addItemClick = function(item) {
     item.click(function () {
-        $("body").empty();
-
         var id = item.data("id");
-        var viewTarefa = new ViewTarefa();
+        var nome = item.children().first().text();
+
+        $("body").empty();
+        var viewTarefa = new ViewTarefa(new Lista(id,nome));
     })
+}
+
+ViewLista.prototype.addOnScreen = function(listaModel){
+    var novoItem = ViewLista.prototype.renderItem(listaModel); 
+
+    ViewLista.prototype.addItemClick(novoItem);
+    ViewLista.prototype.closeInput();
 }

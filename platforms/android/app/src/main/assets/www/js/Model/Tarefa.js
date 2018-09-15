@@ -1,8 +1,5 @@
-function Tarefa(id, nome){
+function Tarefa(id, listaId, nome){
     this.id = id;
-    this.nome = nome;
-}
-
-function Tarefa(nome){
+    this.listaId = listaId;
     this.nome = nome;
 }

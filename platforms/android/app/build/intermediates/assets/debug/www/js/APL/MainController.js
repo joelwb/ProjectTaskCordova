@@ -16,6 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
+var db;
 var app = {
     // Application Constructor
     initialize: function () {
@@ -27,8 +29,21 @@ var app = {
     // Bind any cordova events here. Common events are:
     // 'pause', 'resume', etc.
     onDeviceReady: function () {
-        new ViewLista();
+        new Connection().getConnection(this.getConnection, this.erroConnection);
     },
+
+    getConnection: function (result){
+        db = result;
+        app.showScreen();
+    },
+
+    erroConnection: function(erro){
+        alert(erro);
+    },
+
+    showScreen: function(){
+        var view = new ViewLista();
+    }
 };
 
 app.initialize();
